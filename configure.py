@@ -5,10 +5,19 @@ for module in ["PyQt5", "PyQtWebEngine", "nuitka", "PIL", "requests"]:
     pip.main(['install', module])
 
 from PIL import Image
-import os, random
+import os, random, sys
 
-AppName = input("Type the name of your web app: ")[:32]
-AppDescription = input("Briefly describe your app: ")[:64]
+AppIndex = os.path.isfile(os.path.join("resources", "index.html"))
+if AppIndex:
+    sys.exit(print("Make sure you have a index.html file in the resources folder."))
+
+# Check if the correct amount of arguments were provided
+if len(sys.argv) != 3 and len(sys.argv) != 1:
+    print("Usage: python3 configure.py name \"description\"\nOr python3 configure.py")
+    sys.exit(1)
+
+AppName = sys.argv[1] if len(sys.argv) > 1 else input("Type the name of your web app: ")[:32]
+AppDescription = sys.argv[2] if len(sys.argv) > 2 else input("Briefly describe your app: ")[:64]
 AppPort = random.randint(32768, 61000)
 
 input("Copy the icon to the main folder and name it \"icon.png\".\nPress Enter when you're done")
@@ -93,6 +102,7 @@ exit $?
 """
     AppRunFile.write(content)
 
-
+import subprocess
+subprocess.run(["chmod", "+x", "AppRun"])
 
 # https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
